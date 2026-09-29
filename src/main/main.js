@@ -33,6 +33,7 @@ let store; let history; let peer;
 let widget; let composer; let toast; let tray;
 let toastHeight = 0;
 let suppressBlur = false;
+let quitting = false;
 let lastBlurHide = 0;
 
 // ---------- windows ----------
@@ -178,6 +179,7 @@ function broadcast(channel, payload) {
 }
 
 function pushState() {
+  if (quitting) return; // windows are being destroyed
   broadcast('state', snapshot());
   rebuildTray();
 }
@@ -265,7 +267,7 @@ function buildMenu() {
 }
 
 function rebuildTray() {
-  if (!tray) return;
+  if (!tray || tray.isDestroyed() || quitting) return;
   tray.setToolTip(`Wormhole · ${statusLabel()}`);
   tray.setContextMenu(buildMenu());
 }
@@ -417,6 +419,7 @@ function wirePeer() {
 
 app.on('second-instance', () => { if (composer) showComposer(); });
 app.on('window-all-closed', () => { /* stay alive in the tray */ });
+app.on('before-quit', () => { quitting = true; });
 app.on('will-quit', () => { globalShortcut.unregisterAll(); if (peer) peer.stop(); });
 
 app.whenReady().then(async () => {
