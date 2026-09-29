@@ -50,17 +50,20 @@ Pairing pins each computer's certificate to the other, so no third device can jo
 | --- | --- |
 | Send files or folders | Drop them onto the wormhole (or use **Files** / **Folder** in the panel) |
 | Send a short message | Click the wormhole, type, press Enter (Shift+Enter for a new line) |
+| Open a web page on the other computer | Drag the padlock icon in Chrome/Brave's address bar (or a link or bookmark) onto the wormhole. Dragging the tab itself does not work in browsers |
 | Send your clipboard | `Ctrl+Alt+V` (Windows) / `Cmd+Option+V` (Mac) |
 | Move the wormhole | Drag it anywhere on screen. It remembers the spot |
 | Show or hide the portal | `Ctrl+Alt+B` / `Cmd+Option+B` |
 | Open received files | Toast button, panel footer, or tray menu. Default folder is `Downloads/Wormhole` |
-| Snap to a corner, change receive folder, auto-accept, startup | Right-click the wormhole (or use the tray / menu-bar icon) |
+| Snap to a corner, change receive folder, auto-accept, open links, startup | Right-click the wormhole (or use the tray / menu-bar icon) |
 | Quit | Tray / menu-bar icon, then **Quit Wormhole** |
 
 - An incoming message pops up above the wormhole for 5 seconds. Every message is also kept in the panel's chat history. Click a popup to copy its text.
 - If the other computer is offline, messages are queued and delivered when it comes back.
 - A file whose name already exists gets ` (1)`, ` (2)`… instead of overwriting.
 - Turn off **Auto-accept incoming files** in the menu to be asked before each transfer.
+- Received links open straight in the default browser and stay in the chat as clickable bubbles. Untick **Open received links automatically** in the menu to stop that. Only `http` and `https` links are ever opened.
+- Dropping files makes the wormhole spin and swallow them. Incoming popups grow out of the icon and shrink back into it.
 
 ## Cross-platform notes
 
@@ -79,7 +82,7 @@ More fixes are in the Troubleshooting section of [SETUP-GUIDE.md](SETUP-GUIDE.md
 ## What it can do
 
 - Send files and whole folders (structure kept) between two paired computers, any size, streamed so memory stays low.
-- Send short text messages and your clipboard. Messages queue if the other computer is offline and arrive when it is back.
+- Send short text messages, your clipboard and web links (drop a link and it opens in the other computer's browser). Messages queue if the other computer is offline and arrive when it is back.
 - Find the other computer automatically on the local network, or connect by IP address.
 - Work across Windows and Mac in any combination.
 - Run quietly as a small movable icon plus a tray / menu-bar icon.
@@ -99,6 +102,7 @@ Checked by reading the code. It has not had an independent security audit.
 
 - **Data at rest is not encrypted.** Received files sit in `Downloads/Wormhole` and chat history is plain text in the app data folder. Use BitLocker or FileVault if that matters.
 - **The app announces itself on the LAN.** While running, it advertises its device name and whether a pairing code is showing. This reveals the name, not your data.
+- **Links open automatically by default.** A link from your paired computer opens in your browser without asking (`http`/`https` only). Untick **Open received links automatically** in the right-click menu to turn this off.
 - **Auto-accept is on by default.** Your paired computer can drop files into your receive folder without asking. Turn it off in the right-click menu for a prompt each time.
 - **A paired computer is trusted.** Files are not scanned, so do not open ones you did not expect.
 - **The device key is stored in the app data folder.** Anyone who copies it can impersonate that computer. It is saved owner-only on Mac, but that restriction is not applied on Windows.

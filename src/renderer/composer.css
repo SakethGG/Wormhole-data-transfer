@@ -44,6 +44,8 @@ input:focus, textarea:focus { border-color: var(--accent); }
 .msg.in { align-self: flex-start; background: #fff; }
 .msg.out { align-self: flex-end; background: #e6c894; }
 .msg.clip::before { content: "clipboard"; display: block; font-size: 10px; color: var(--dim); margin-bottom: 2px; }
+.msg.link::before { content: "link"; display: block; font-size: 10px; color: var(--dim); margin-bottom: 2px; }
+.msg.link { text-decoration: underline; }
 .meta { display: block; font-size: 10px; color: var(--dim); margin-top: 2px; text-align: right; }
 #composeForm { display: flex; gap: 8px; padding: 10px 12px; border-top: 2px solid var(--ink); align-items: flex-end; }
 #input { flex: 1; resize: none; max-height: 96px; }

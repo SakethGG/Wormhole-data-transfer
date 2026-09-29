@@ -105,12 +105,13 @@ You never need to pair again. Whenever both are running, they reconnect on their
 | --- | --- |
 | Send files or folders | Drag them onto the wormhole. It pulls them in |
 | Send a short message | Click the wormhole, type, press **Enter** (**Shift+Enter** for a new line) |
+| Open a web page on the other computer | Drag the padlock icon in Chrome/Brave's address bar (or a link or bookmark) onto the wormhole. Dragging the tab itself does not work, because browsers do not share a tab's address |
 | Send your clipboard | `Ctrl+Alt+V` on Windows, `Cmd+Option+V` on Mac |
 | Show or hide the portal | `Ctrl+Alt+B` / `Cmd+Option+B` |
 | Move the wormhole | Drag it anywhere. Its position is remembered |
 | Read a message | It pops up above the wormhole for 5 seconds and stays in the chat when you open the panel |
 | Open received files | **Show in folder** on the popup, **Received files** in the panel, or the tray menu. They are saved in `Downloads/Wormhole` |
-| Corner, receive folder, auto-accept, start at login | Right-click the wormhole, or use the tray (Windows) / menu-bar (Mac) icon |
+| Corner, receive folder, auto-accept, open links, start at login | Right-click the wormhole, or use the tray (Windows) / menu-bar (Mac) icon |
 | Stop a transfer | Tray or menu-bar icon, then **Cancel transfers** |
 | Quit | Tray or menu-bar icon, then **Quit Wormhole** |
 

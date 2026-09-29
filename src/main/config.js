@@ -6,6 +6,7 @@ const DEFAULTS = {
   corner: 'bottom-right',
   pos: null, // { x, y } once the user drags the widget; overrides corner
   autoAccept: true,
+  openLinks: true, // open links sent from the paired computer straight in the browser
   downloadDir: null, // resolved by main to <Downloads>/Wormhole
   peer: null, // { fp, name, ip }
   openAtLogin: false,

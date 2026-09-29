@@ -525,7 +525,7 @@ class PeerService extends EventEmitter {
     if (this.seenMsgIds.has(msg.id)) return;
     this.seenMsgIds.add(msg.id);
     if (this.seenMsgIds.size > 500) this.seenMsgIds.delete(this.seenMsgIds.values().next().value);
-    const m = { id: msg.id, text: String(msg.text || '').slice(0, MAX_TEXT), ts: Date.now(), dir: 'in', kind: msg.kind === 'clip' ? 'clip' : 'text' };
+    const m = { id: msg.id, text: String(msg.text || '').slice(0, MAX_TEXT), ts: Date.now(), dir: 'in', kind: msg.kind === 'clip' || msg.kind === 'link' ? msg.kind : 'text' };
     this._pushHistory(m);
     this.emit('message', m, link.name);
   }

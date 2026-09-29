@@ -37,9 +37,12 @@ window.addEventListener('drop', (e) => {
   const dt = e.dataTransfer;
   if (!dt) return;
   const paths = [...dt.files].map((f) => webUtils.getPathForFile(f)).filter(Boolean);
-  if (paths.length) ipcRenderer.invoke('files:send', paths);
-  else {
-    const text = dt.getData('text/plain');
-    if (text && text.trim()) ipcRenderer.invoke('msg:send', text);
-  }
+  if (paths.length) return ipcRenderer.invoke('files:send', paths);
+  // a browser tab/link dropped here arrives as a URL: send it so it opens on the other computer
+  const uri = (dt.getData('text/uri-list') || '').split(/\r?\n/).find((l) => l && !l.startsWith('#'));
+  const moz = (dt.getData('text/x-moz-url') || '').split(/\r?\n/)[0];
+  const text = dt.getData('text/plain');
+  const url = [uri, moz, text && text.trim()].find((u) => u && /^https?:\/\/\S+$/i.test(u.trim()));
+  if (url) ipcRenderer.invoke('link:send', url.trim());
+  else if (text && text.trim()) ipcRenderer.invoke('msg:send', text);
 });

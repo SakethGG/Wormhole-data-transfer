@@ -256,6 +256,7 @@ function buildMenu() {
     { type: 'separator' },
     { label: 'Open received files folder', click: openDownloads },
     { label: 'Change receive folder…', click: chooseDownloadDir },
+    { label: 'Open received links automatically', type: 'checkbox', checked: !!store.get('openLinks'), click: (i) => { store.set('openLinks', i.checked); pushState(); } },
     { label: 'Auto-accept incoming files', type: 'checkbox', checked: store.get('autoAccept'), click: (i) => { store.set('autoAccept', i.checked); pushState(); } },
     {
       label: 'Corner',
@@ -298,6 +299,11 @@ async function chooseDownloadDir() {
   if (!r.canceled && r.filePaths[0]) { store.set('downloadDir', r.filePaths[0]); pushState(); }
 }
 
+/** Only plain http(s) links are ever opened automatically. */
+function isWebUrl(u) {
+  try { const p = new URL(String(u)); return p.protocol === 'http:' || p.protocol === 'https:'; } catch { return false; }
+}
+
 function sendClipboard() {
   const text = clipboard.readText();
   if (!text.trim()) return showToast({ id: 'clip', kind: 'info', title: 'Clipboard is empty', body: 'Copy some text first.' });
@@ -324,6 +330,12 @@ function fmtBytes(n) {
 
 function registerIpc() {
   ipcMain.handle('state:get', () => snapshot());
+  ipcMain.handle('link:send', (_e, url) => {
+    if (!isWebUrl(url)) return false;
+    peer.sendMessage(url, 'link');
+    showToast({ id: `link-${Date.now()}`, kind: 'info', ttl: 3000, title: 'Link sent', body: url.length > 80 ? `${url.slice(0, 80)}…` : url });
+    return true;
+  });
   ipcMain.handle('msg:send', (_e, text) => { peer.sendMessage(text); return true; });
   ipcMain.handle('files:send', (_e, paths) => {
     if (!Array.isArray(paths) || !paths.length) return false;
@@ -372,6 +384,7 @@ function registerIpc() {
     if (!a) return;
     if (a.type === 'open' && typeof a.path === 'string') shell.showItemInFolder(a.path);
     if (a.type === 'copy' && typeof a.text === 'string') clipboard.writeText(a.text);
+    if (a.type === 'url' && isWebUrl(a.url)) shell.openExternal(a.url);
   });
 }
 
@@ -386,6 +399,10 @@ function wirePeer() {
   });
   peer.on('message', (m, from) => {
     widget.webContents.send('ping');
+    if (m.kind === 'link' && isWebUrl(m.text) && store.get('openLinks')) {
+      shell.openExternal(m.text);
+      return showToast({ id: `msg-${m.id}`, kind: 'msg', ttl: 5000, title: `Opened link from ${from}`, body: m.text, copy: m.text });
+    }
     if (composer.isVisible() && composer.isFocused()) return;
     showToast({
       id: `msg-${m.id}`, kind: 'msg', ttl: 5000,

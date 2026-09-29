@@ -36,14 +36,14 @@ function renderLog(list) {
   log.textContent = '';
   for (const m of list) {
     const div = document.createElement('div');
-    div.className = `msg ${m.dir}${m.kind === 'clip' ? ' clip' : ''}`;
-    div.title = 'Click to copy';
+    div.className = `msg ${m.dir}${m.kind === 'clip' ? ' clip' : ''}${m.kind === 'link' ? ' link' : ''}`;
+    div.title = m.kind === 'link' ? 'Click to open' : 'Click to copy';
     div.append(document.createTextNode(m.text));
     const meta = document.createElement('span');
     meta.className = 'meta';
     meta.textContent = `${fmtTime(m.ts)}${m.dir === 'out' ? (m.delivered ? ' ✓' : ' …') : ''}`;
     div.append(meta);
-    div.addEventListener('click', () => api.toastAction({ type: 'copy', text: m.text }));
+    div.addEventListener('click', () => api.toastAction(m.kind === 'link' ? { type: 'url', url: m.text } : { type: 'copy', text: m.text }));
     log.append(div);
   }
   $('empty').hidden = list.length > 0;
