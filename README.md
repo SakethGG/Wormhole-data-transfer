@@ -147,4 +147,4 @@ Delete it (with Wormhole closed) to reset everything.
 
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).
