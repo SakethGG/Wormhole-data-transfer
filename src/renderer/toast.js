@@ -4,8 +4,9 @@ const items = new Map(); // id -> {el, timer}
 const MAX = 4;
 
 function report() {
-  // let layout settle, then tell the main process how tall the window must be
-  requestAnimationFrame(() => window.bh.toastHeight(items.size ? stack.getBoundingClientRect().height + 4 : 0));
+  // tell the main process how tall the window must be. A timer, not requestAnimationFrame:
+  // rAF is paused while the window is hidden, which is exactly when the first toast arrives.
+  setTimeout(() => window.bh.toastHeight(items.size ? stack.getBoundingClientRect().height + 4 : 0), 0);
 }
 
 function remove(id) {

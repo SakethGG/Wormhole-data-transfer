@@ -123,6 +123,7 @@ function createComposer() {
 
 function createToast() {
   toast = baseWindow({ width: TOAST_W, height: 80, focusable: false });
+  toast.webContents.setBackgroundThrottling(false);
   toast.setIgnoreMouseEvents(false);
   toast.loadFile(path.join(RENDERER, 'toast.html'));
 }
