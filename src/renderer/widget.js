@@ -17,7 +17,36 @@ window.addEventListener('drop', () => {
   setTimeout(() => hole.classList.remove('suck'), 700);
 });
 
-hole.addEventListener('click', () => window.bh.toggleComposer());
+// Drag the portal anywhere on screen; a press that barely moves still counts as a click.
+let press = null;
+let dragged = false;
+hole.addEventListener('pointerdown', (e) => {
+  if (e.button !== 0) return;
+  press = { x: e.screenX, y: e.screenY };
+  dragged = false;
+  hole.setPointerCapture(e.pointerId);
+});
+hole.addEventListener('pointermove', (e) => {
+  if (!press) return;
+  const dx = e.screenX - press.x;
+  const dy = e.screenY - press.y;
+  if (!dragged) {
+    if (Math.hypot(dx, dy) < 5) return;
+    dragged = true;
+    hole.classList.add('moving');
+    window.bh.dragStart();
+  }
+  window.bh.dragMove({ dx, dy });
+});
+function endPress(e) {
+  if (!press) return;
+  press = null;
+  if (hole.hasPointerCapture(e.pointerId)) hole.releasePointerCapture(e.pointerId);
+  if (dragged) { hole.classList.remove('moving'); window.bh.dragEnd(); }
+}
+hole.addEventListener('pointerup', endPress);
+hole.addEventListener('pointercancel', endPress);
+hole.addEventListener('click', () => { if (dragged) { dragged = false; return; } window.bh.toggleComposer(); });
 window.addEventListener('contextmenu', (e) => { e.preventDefault(); window.bh.widgetMenu(); });
 
 window.bh.on('state', (s) => setStatus(s.status));

@@ -4,6 +4,7 @@ const path = require('path');
 
 const DEFAULTS = {
   corner: 'bottom-right',
+  pos: null, // { x, y } once the user drags the widget; overrides corner
   autoAccept: true,
   downloadDir: null, // resolved by main to <Downloads>/Wormhole
   peer: null, // { fp, name, ip }

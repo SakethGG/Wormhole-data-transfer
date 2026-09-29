@@ -15,7 +15,8 @@ const PRELOAD = path.join(RENDERER, 'preload.js');
 const IS_MAC = process.platform === 'darwin';
 const IS_WIN = process.platform === 'win32';
 
-const WIDGET = 110;
+const WIDGET = 80;
+const WIDGET_DESIGN = 110; // the widget artwork is laid out at this size and scaled down with zoom
 const MARGIN = 12;
 const GAP = 8;
 const COMPOSER = { w: 350, h: 540 };
@@ -59,7 +60,19 @@ function baseWindow(opts) {
   return win;
 }
 
+function clampToDisplay(x, y) {
+  const wa = screen.getDisplayNearestPoint({ x: Math.round(x + WIDGET / 2), y: Math.round(y + WIDGET / 2) }).workArea;
+  return {
+    x: Math.round(Math.min(Math.max(x, wa.x), wa.x + wa.width - WIDGET)),
+    y: Math.round(Math.min(Math.max(y, wa.y), wa.y + wa.height - WIDGET)),
+  };
+}
+
 function widgetBounds() {
+  const pos = store.get('pos');
+  if (pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) {
+    return { ...clampToDisplay(pos.x, pos.y), width: WIDGET, height: WIDGET };
+  }
   const wa = screen.getPrimaryDisplay().workArea;
   const c = store.get('corner');
   return {
@@ -70,19 +83,31 @@ function widgetBounds() {
   };
 }
 
+/** Which side of its screen the widget sits on decides which way panels grow. */
+function anchor() {
+  const wb = widget && !widget.isDestroyed() ? widget.getBounds() : widgetBounds();
+  const wa = screen.getDisplayNearestPoint({ x: wb.x + WIDGET / 2, y: wb.y + WIDGET / 2 }).workArea;
+  return {
+    right: wb.x + WIDGET / 2 > wa.x + wa.width / 2,
+    bottom: wb.y + WIDGET / 2 > wa.y + wa.height / 2,
+    wa,
+  };
+}
+
 /** Bounds for a panel of the given size stacked next to the widget, growing away from the screen edge. */
 function panelBounds(width, height) {
   const wb = widgetBounds();
-  const c = store.get('corner');
-  const x = c.endsWith('right') ? wb.x + WIDGET - width : wb.x;
-  const y = c.startsWith('bottom') ? wb.y - GAP - height : wb.y + WIDGET + GAP;
-  return { x, y, width, height };
+  const a = anchor();
+  const x = a.right ? wb.x + WIDGET - width : wb.x;
+  const y = a.bottom ? wb.y - GAP - height : wb.y + WIDGET + GAP;
+  return { x: Math.max(a.wa.x, x), y, width, height };
 }
 
 function createWidget() {
   widget = baseWindow({ width: WIDGET, height: WIDGET, focusable: true });
   widget.setBounds(widgetBounds());
   widget.loadFile(path.join(RENDERER, 'widget.html'));
+  widget.webContents.on('did-finish-load', () => widget.webContents.setZoomFactor(WIDGET / WIDGET_DESIGN));
   widget.once('ready-to-show', () => widget.showInactive());
 }
 
@@ -119,8 +144,7 @@ function positionToast() {
   const b = panelBounds(TOAST_W, toastHeight);
   // toasts sit on the widget's inner side; when the composer is open they stack beyond it
   if (composer.isVisible()) {
-    const c = store.get('corner');
-    b.y = c.startsWith('bottom') ? b.y - COMPOSER.h - GAP : b.y + COMPOSER.h + GAP;
+    b.y = anchor().bottom ? b.y - COMPOSER.h - GAP : b.y + COMPOSER.h + GAP;
   }
   toast.setBounds(b);
   if (!toast.isVisible()) toast.showInactive();
@@ -229,8 +253,8 @@ function buildMenu() {
     {
       label: 'Corner',
       submenu: CORNERS.map((c) => ({
-        label: c.replace('-', ' '), type: 'radio', checked: store.get('corner') === c,
-        click: () => { store.set('corner', c); applyCorner(); pushState(); },
+        label: c.replace('-', ' '), type: 'radio', checked: !store.get('pos') && store.get('corner') === c,
+        click: () => { store.set('pos', null); store.set('corner', c); applyCorner(); pushState(); },
       })),
     },
     { label: 'Start when I log in', type: 'checkbox', checked: !!store.get('openAtLogin'), click: (i) => { setAutostart(i.checked); pushState(); } },
@@ -318,6 +342,22 @@ function registerIpc() {
   ipcMain.handle('history:clear', () => { peer.clearHistory(); return true; });
   ipcMain.handle('composer:toggle', () => toggleComposer());
   ipcMain.handle('composer:hide', () => composer.hide());
+  let dragOrigin = null;
+  ipcMain.on('widget:dragstart', () => { const b = widget.getBounds(); dragOrigin = { x: b.x, y: b.y }; });
+  ipcMain.on('widget:dragmove', (_e, d) => {
+    if (!dragOrigin) return;
+    const p = clampToDisplay(dragOrigin.x + d.dx, dragOrigin.y + d.dy);
+    widget.setBounds({ ...p, width: WIDGET, height: WIDGET });
+    if (composer.isVisible()) composer.setBounds(panelBounds(COMPOSER.w, COMPOSER.h));
+    positionToast();
+  });
+  ipcMain.on('widget:dragend', () => {
+    if (!dragOrigin) return;
+    dragOrigin = null;
+    const b = widget.getBounds();
+    store.set('pos', { x: b.x, y: b.y });
+    applyCorner();
+  });
   ipcMain.handle('widget:menu', () => buildMenu().popup({ window: widget }));
   ipcMain.handle('downloads:open', () => openDownloads());
   ipcMain.handle('toast:height', (_e, h) => { toastHeight = Math.max(0, Math.min(600, Math.round(h))); positionToast(); });

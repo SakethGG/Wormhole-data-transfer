@@ -211,7 +211,14 @@ class PeerService extends EventEmitter {
 
   _startDiscovery() {
     try {
-      this.bonjour = new Bonjour();
+      // mDNS errors (e.g. EHOSTUNREACH on 224.0.0.251 with a VPN/virtual adapter) must not crash the app.
+      const onMdnsError = (err) => {
+        if (this._mdnsWarned) return;
+        this._mdnsWarned = true;
+        this.emit('notice', { level: 'warn', text: `LAN discovery problem (${err.message}). If the other computer is not listed, enter its IP manually.` });
+      };
+      this.bonjour = new Bonjour({}, onMdnsError);
+      try { this.bonjour.server.mdns.on('error', onMdnsError); } catch { /* ignore */ }
       this._publish();
       this.browser = this.bonjour.find({ type: SERVICE_TYPE });
       const onUp = (svc) => {

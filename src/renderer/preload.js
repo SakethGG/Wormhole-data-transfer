@@ -2,6 +2,7 @@
 const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
 const EVENTS = new Set(['state', 'progress', 'ping', 'toast:add', 'composer:shown']);
+const send = (channel) => (...args) => ipcRenderer.send(channel, ...args);
 const call = (channel) => (...args) => ipcRenderer.invoke(channel, ...args);
 
 contextBridge.exposeInMainWorld('bh', {
@@ -17,6 +18,9 @@ contextBridge.exposeInMainWorld('bh', {
   clearHistory: call('history:clear'),
   toggleComposer: call('composer:toggle'),
   hideComposer: call('composer:hide'),
+  dragStart: send('widget:dragstart'),
+  dragMove: send('widget:dragmove'),
+  dragEnd: send('widget:dragend'),
   widgetMenu: call('widget:menu'),
   openDownloads: call('downloads:open'),
   toastHeight: call('toast:height'),
