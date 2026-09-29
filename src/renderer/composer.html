@@ -19,21 +19,21 @@
 
   <!-- shown while not paired -->
   <section id="pairView" hidden>
-    <h2>Pair with your other computer</h2>
-    <p class="hint">Run Wormhole on both computers. Show a code on one, then enter it on the other. You only do this once.</p>
+    <h2>Pair your computers</h2>
+    <p class="hint">Show a code on one computer, enter it on the other. Once only.</p>
 
     <div class="box">
-      <h3>A. Show a code on this computer</h3>
+      <h3>Show a code</h3>
       <button id="btnShowCode" class="primary">Show code</button>
       <div id="codeBlock" hidden>
         <div id="code">------</div>
-        <div class="hint">Enter this on the other computer. Expires in 5 minutes.</div>
+        <div class="hint">Enter this on the other computer.</div>
         <button id="btnCancelCode" class="ghost">Cancel</button>
       </div>
     </div>
 
     <div class="box">
-      <h3>B. Enter a code from the other computer</h3>
+      <h3>Enter a code</h3>
       <div id="nearby" class="hint">Looking for computers showing a code…</div>
       <input id="pairHost" placeholder="IP address (only if not listed above)" spellcheck="false">
       <div class="row">
@@ -54,7 +54,7 @@
       </div>
     </div>
     <div id="log"></div>
-    <div id="empty" class="hint">Type a short message below, or drop files on the wormhole.<br>Ctrl/Cmd+Alt+V sends your clipboard.</div>
+    <div id="empty" class="hint">Type a message, or drop files on the wormhole.</div>
     <form id="composeForm">
       <textarea id="input" rows="1" maxlength="4000" placeholder="Message…" spellcheck="true"></textarea>
       <button id="btnSend" class="primary" type="submit">Send</button>

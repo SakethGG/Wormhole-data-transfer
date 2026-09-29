@@ -383,7 +383,7 @@ function wirePeer() {
     widget.webContents.send('ping');
     if (composer.isVisible() && composer.isFocused()) return;
     showToast({
-      id: `msg-${m.id}`, kind: 'msg', ttl: 9000,
+      id: `msg-${m.id}`, kind: 'msg', ttl: 5000,
       title: m.kind === 'clip' ? `Clipboard from ${from}` : from,
       body: m.text, copy: m.text,
     });

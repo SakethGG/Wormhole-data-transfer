@@ -1,21 +1,22 @@
 :root {
-  --bg: #0b0a10;
-  --panel: #14121c;
-  --panel-2: #1c1929;
-  --line: #2a2640;
-  --text: #ece9f7;
-  --dim: #8a86a3;
-  --accent: #ff9a45;
-  --accent-2: #8a5cff;
-  --ok: #3ddc84;
-  --warn: #ffb020;
-  --bad: #ff5d6c;
+  --paper: #ebe4d2;
+  --paper-2: #f6f1e4;
+  --ink: #2f2f34;
+  --dim: #77726a;
+  --accent: #d9a05a;
+  --accent-2: #9a95b5;
+  --ok: #86a982;
+  --warn: #d4a94f;
+  --bad: #b5574f;
+  --font: "Comic Sans MS", "Comic Neue", "Chalkboard SE", "Marker Felt", "Segoe UI", sans-serif;
 }
 * { box-sizing: border-box; }
 html, body {
   margin: 0; height: 100%; overflow: hidden; background: transparent;
-  font: 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--text);
+  font: 13px/1.4 var(--font); color: var(--ink);
   -webkit-user-select: none; user-select: none;
 }
 button { font: inherit; color: inherit; cursor: pointer; }
-input, textarea { font: inherit; color: var(--text); -webkit-user-select: text; user-select: text; }
+input, textarea { font: inherit; color: var(--ink); -webkit-user-select: text; user-select: text; }
+body { padding: 0; }
+[hidden] { display: none !important; }

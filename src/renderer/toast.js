@@ -56,8 +56,10 @@ function build(t) {
       title.textContent = `${t.title} · copied`;
     });
   }
-  el.addEventListener('mouseenter', () => { const it = items.get(t.id); if (it) clearTimeout(it.timer); });
-  el.addEventListener('mouseleave', () => arm(t.id, t.kind === 'progress' ? 0 : 3000));
+  if (t.kind !== 'msg') { // message bubbles always vanish after their 5 seconds
+    el.addEventListener('mouseenter', () => { const it = items.get(t.id); if (it) clearTimeout(it.timer); });
+    el.addEventListener('mouseleave', () => arm(t.id, t.kind === 'progress' ? 0 : 3000));
+  }
   return el;
 }
 

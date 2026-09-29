@@ -1,5 +1,5 @@
 'use strict';
-// Renders assets/icon.svg into icon.png (1024), icon.ico (multi-size) and tray.png.
+// Renders the pixel art assets/hole.png into icon.png (1024), icon.ico (multi-size) and tray.png.
 // Run with:  npm run icons   (needs Electron, so it works on Windows and macOS)
 const { app, BrowserWindow, nativeImage } = require('electron');
 const fs = require('fs');
@@ -28,9 +28,9 @@ function buildIco(images) {
 }
 
 app.whenReady().then(async () => {
-  const svg = fs.readFileSync(path.join(ASSETS, 'icon.svg'), 'utf8');
   const win = new BrowserWindow({ show: false, width: 1024, height: 1024, useContentSize: true, transparent: true, frame: false });
-  const html = `<html><body style="margin:0;background:transparent">${svg.replace('width="256" height="256"', 'width="1024" height="1024"')}</body></html>`;
+  const art = 'data:image/png;base64,' + fs.readFileSync(path.join(ASSETS, 'hole.png')).toString('base64');
+  const html = `<html><body style="margin:0;background:transparent"><img src="${art}" width="1024" height="1024" style="image-rendering:pixelated;display:block"></body></html>`;
   await win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
   await new Promise((r) => setTimeout(r, 400));
   const shot = await win.webContents.capturePage({ x: 0, y: 0, width: 1024, height: 1024 });

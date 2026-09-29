@@ -1,68 +1,35 @@
 #hole {
   position: absolute; inset: 9px; cursor: pointer;
-  transition: transform .25s cubic-bezier(.2,.9,.3,1.3);
+  transition: transform .2s cubic-bezier(.2,.9,.3,1.3);
 }
 #hole:hover { transform: scale(1.06); }
 #hole.moving { cursor: grabbing; transition: none; }
 
-.halo {
-  position: absolute; inset: -8px; border-radius: 50%;
-  background: radial-gradient(circle, transparent 46%, rgba(255,130,50,.38) 60%, rgba(120,70,255,.2) 72%, transparent 80%);
-  animation: breathe 4.5s ease-in-out infinite;
-}
-.disk {
-  position: absolute; inset: 3px; border-radius: 50%;
-  -webkit-mask: radial-gradient(circle, transparent 44%, #000 49%, #000 64%, transparent 71%);
-  mask: radial-gradient(circle, transparent 44%, #000 49%, #000 64%, transparent 71%);
-}
-.disk i {
-  position: absolute; inset: 0; border-radius: 50%;
-  background: conic-gradient(from 0deg, #ffc46b, #ff5d8f 18%, #7b4dff 38%, #1a1140 52%, #ff7a3c 70%, #ffd08a 86%, #ffc46b);
-  filter: saturate(1.25);
-  animation: spin 6s linear infinite;
-}
-/* edge-on disk crossing the hole gives the "lensed" look */
-.disk.flat {
-  inset: -12px; transform: rotate(-20deg) scaleY(.26);
-  -webkit-mask: radial-gradient(circle, transparent 40%, #000 47%, #000 66%, transparent 73%);
-  mask: radial-gradient(circle, transparent 40%, #000 47%, #000 66%, transparent 73%);
-}
-.disk.flat i { animation-duration: 4.2s; animation-direction: reverse; }
-.core {
-  position: absolute; inset: 24px; border-radius: 50%; background: #000;
-  box-shadow: 0 0 0 1.5px rgba(255,196,120,.95), 0 0 12px 3px rgba(255,120,50,.75), inset 0 0 10px #000;
-}
+#art { position: absolute; inset: -8px; width: calc(100% + 16px); height: calc(100% + 16px); animation: float 5s ease-in-out infinite; pointer-events: none; }
 
 #ring {
   position: absolute; inset: -5px; width: calc(100% + 10px); height: calc(100% + 10px);
   opacity: 0; transition: opacity .2s; transform: rotate(-90deg);
 }
-#ring .track { fill: none; stroke: rgba(255,255,255,.12); stroke-width: 3; }
+#ring .track { fill: none; stroke: rgba(47,47,52,.25); stroke-width: 4; }
 #ring .bar {
-  fill: none; stroke: #ffd08a; stroke-width: 3.5; stroke-linecap: round;
+  fill: none; stroke: #f6f1e4; stroke-width: 4; stroke-linecap: round;
   stroke-dasharray: 100 100; stroke-dashoffset: 100; transition: stroke-dashoffset .12s linear;
-  filter: drop-shadow(0 0 3px rgba(255,190,100,.9));
 }
 #hole.busy #ring { opacity: 1; }
 
-#dot { position: absolute; right: -1px; bottom: 2px; width: 13px; height: 13px; border-radius: 50%; border: 2px solid #000; background: #6b6b78; }
-#hole.online #dot { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+#dot { position: absolute; right: -2px; bottom: 0; width: 15px; height: 15px; border-radius: 50%; border: 3px solid var(--ink); background: #9a9a9a; }
+#hole.online #dot { background: var(--ok); }
 #hole.connecting #dot { background: var(--warn); animation: blink 1s infinite; }
 #hole.unpaired #dot { background: var(--accent-2); animation: blink 1.6s infinite; }
-#hole.offline .disk i { animation-duration: 14s; filter: saturate(.55) brightness(.75); }
-#hole.offline .halo { opacity: .55; }
+#hole.offline #art { filter: grayscale(.9) brightness(.8); animation-duration: 10s; }
 
-#hole.drag { transform: scale(1.16); }
-#hole.drag .disk i { animation-duration: 1.2s; }
-#hole.drag .halo {
-  animation: none;
-  background: radial-gradient(circle, transparent 42%, rgba(255,150,60,.7) 58%, rgba(140,90,255,.4) 72%, transparent 82%);
-}
+#hole.drag { transform: scale(1.14); }
+#hole.drag #art { animation-duration: .8s; }
 #hole.suck { animation: suck .6s cubic-bezier(.4,0,.2,1); }
-#hole.ping .halo { animation: flash .9s ease-out; }
+#hole.ping #art { animation: pop .5s ease-out; }
 
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes breathe { 50% { transform: scale(1.07); opacity: .8; } }
+@keyframes float { 0%, 100% { transform: translateY(-1.5px); } 50% { transform: translateY(1.5px); } }
 @keyframes blink { 50% { opacity: .35; } }
-@keyframes suck { 0% { transform: scale(1.16); } 35% { transform: scale(.78); } 70% { transform: scale(1.12); } 100% { transform: scale(1); } }
-@keyframes flash { 0% { transform: scale(1); opacity: 1; filter: brightness(2.2); } 100% { transform: scale(1.35); opacity: .2; } }
+@keyframes suck { 0% { transform: scale(1.14); } 35% { transform: scale(.78); } 70% { transform: scale(1.1); } 100% { transform: scale(1); } }
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.22) rotate(6deg); } 100% { transform: scale(1); } }
