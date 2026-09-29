@@ -1,0 +1,21 @@
+:root {
+  --bg: #0b0a10;
+  --panel: #14121c;
+  --panel-2: #1c1929;
+  --line: #2a2640;
+  --text: #ece9f7;
+  --dim: #8a86a3;
+  --accent: #ff9a45;
+  --accent-2: #8a5cff;
+  --ok: #3ddc84;
+  --warn: #ffb020;
+  --bad: #ff5d6c;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; height: 100%; overflow: hidden; background: transparent;
+  font: 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--text);
+  -webkit-user-select: none; user-select: none;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+input, textarea { font: inherit; color: var(--text); -webkit-user-select: text; user-select: text; }

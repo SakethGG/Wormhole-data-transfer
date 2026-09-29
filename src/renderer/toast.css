@@ -1,0 +1,19 @@
+html, body { height: auto; overflow: hidden; }
+#stack { display: flex; flex-direction: column; gap: 8px; padding: 2px; }
+.toast {
+  background: linear-gradient(180deg, #1a1626, #110f19); border: 1px solid var(--line); border-left: 3px solid var(--accent-2);
+  border-radius: 12px; padding: 10px 12px; box-shadow: 0 8px 24px rgba(0,0,0,.5);
+  animation: in .22s cubic-bezier(.2,.9,.3,1.2);
+}
+.toast.msg { border-left-color: var(--accent); cursor: pointer; }
+.toast.file { border-left-color: var(--ok); }
+.toast.progress { border-left-color: #ffd08a; }
+.title { font-weight: 700; font-size: 12px; color: var(--dim); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.body { font-size: 14px; white-space: pre-wrap; word-break: break-word; max-height: 130px; overflow: hidden; }
+.msg .body { font-size: 15px; }
+.actions { margin-top: 8px; display: flex; gap: 8px; }
+.actions button { border: 1px solid var(--line); background: var(--panel-2); border-radius: 8px; padding: 4px 10px; font-size: 12px; }
+.actions button:hover { border-color: var(--accent); }
+.bar { height: 5px; background: #2a2640; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ff9a45, #ff5d8f); transition: width .1s linear; }
+@keyframes in { from { transform: translateY(8px) scale(.97); opacity: 0; } to { transform: none; opacity: 1; } }

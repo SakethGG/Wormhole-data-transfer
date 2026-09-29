@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'">
+<title>Wormhole</title>
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="composer.css">
+</head>
+<body>
+<div id="card">
+  <header>
+    <div id="status"><span id="dot"></span><span id="statusText">…</span></div>
+    <div class="tools">
+      <button id="btnFiles" title="Send files…">Files</button>
+      <button id="btnFolder" title="Send a folder…">Folder</button>
+    </div>
+  </header>
+
+  <!-- shown while not paired -->
+  <section id="pairView" hidden>
+    <h2>Pair with your other computer</h2>
+    <p class="hint">Run Wormhole on both computers. Show a code on one, then enter it on the other. You only do this once.</p>
+
+    <div class="box">
+      <h3>A. Show a code on this computer</h3>
+      <button id="btnShowCode" class="primary">Show code</button>
+      <div id="codeBlock" hidden>
+        <div id="code">------</div>
+        <div class="hint">Enter this on the other computer. Expires in 5 minutes.</div>
+        <button id="btnCancelCode" class="ghost">Cancel</button>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>B. Enter a code from the other computer</h3>
+      <div id="nearby" class="hint">Looking for computers showing a code…</div>
+      <input id="pairHost" placeholder="IP address (only if not listed above)" spellcheck="false">
+      <div class="row">
+        <input id="pairCode" placeholder="6-digit code" maxlength="6" inputmode="numeric" spellcheck="false">
+        <button id="btnPair" class="primary">Connect</button>
+      </div>
+      <div id="pairError" class="err"></div>
+    </div>
+  </section>
+
+  <!-- shown when paired -->
+  <section id="chatView" hidden>
+    <div id="offlineBar" hidden>
+      <span id="offlineText">Other computer is offline. Retrying…</span>
+      <div class="row">
+        <input id="manualIp" placeholder="Its IP address, if it keeps failing" spellcheck="false">
+        <button id="btnManualIp" class="ghost">Try</button>
+      </div>
+    </div>
+    <div id="log"></div>
+    <div id="empty" class="hint">Type a short message below, or drop files on the wormhole.<br>Ctrl/Cmd+Alt+V sends your clipboard.</div>
+    <form id="composeForm">
+      <textarea id="input" rows="1" maxlength="4000" placeholder="Message…" spellcheck="true"></textarea>
+      <button id="btnSend" class="primary" type="submit">Send</button>
+    </form>
+  </section>
+
+  <footer>
+    <span id="peerLine"></span>
+    <span>
+      <button id="btnOpen" class="link">Received files</button>
+      <button id="btnClear" class="link">Clear chat</button>
+      <button id="btnUnpair" class="link">Unpair</button>
+    </span>
+  </footer>
+</div>
+<script src="composer.js"></script>
+</body>
+</html>
