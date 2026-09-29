@@ -9,13 +9,16 @@ function report() {
   setTimeout(() => window.bh.toastHeight(items.size ? stack.getBoundingClientRect().height + 4 : 0), 0);
 }
 
-function remove(id) {
+function remove(id, instant) {
   const it = items.get(id);
-  if (!it) return;
+  if (!it || it.leaving) return;
   clearTimeout(it.timer);
-  it.el.remove();
-  items.delete(id);
-  report();
+  const finish = () => { it.el.remove(); items.delete(id); report(); };
+  if (instant) return finish();
+  // "minimise" back into the icon, then drop out of the layout
+  it.leaving = true;
+  it.el.classList.add('leave');
+  setTimeout(finish, 380);
 }
 
 function arm(id, ttl) {
@@ -27,6 +30,7 @@ function arm(id, ttl) {
 function build(t) {
   const el = document.createElement('div');
   el.className = `toast ${t.kind || 'info'}`;
+  if (t.origin) el.style.transformOrigin = t.origin;
   const title = document.createElement('div');
   title.className = 'title';
   title.textContent = t.title || '';
@@ -65,7 +69,7 @@ function build(t) {
 }
 
 window.bh.on('toast:add', (t) => {
-  if (t.remove) return remove(t.id);
+  if (t.remove) return remove(t.id, true);
   const existing = items.get(t.id);
   if (existing && t.kind === 'progress') {
     // update in place so a running transfer does not spawn a new card per tick
@@ -74,12 +78,12 @@ window.bh.on('toast:add', (t) => {
     existing.el.querySelector('.bar > i').style.width = `${t.pct || 0}%`;
     return;
   }
-  if (existing) remove(t.id);
+  if (existing) remove(t.id, true);
   const el = build(t);
   items.set(t.id, { el, timer: null });
   stack.append(el);
   if (t.kind === 'progress') el.querySelector('.bar > i').style.width = `${t.pct || 0}%`;
-  while (items.size > MAX) remove(items.keys().next().value);
+  while (items.size > MAX) remove(items.keys().next().value, true);
   arm(t.id, t.kind === 'progress' ? 0 : t.ttl || 6000);
   report();
 });

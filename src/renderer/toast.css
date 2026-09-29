@@ -1,6 +1,7 @@
 html, body { height: auto; overflow: hidden; }
 #stack { display: flex; flex-direction: column; gap: 8px; padding: 2px; }
-.toast { background: var(--paper); border: 2px solid var(--ink); border-radius: 8px; padding: 8px 12px; animation: in .2s ease-out; }
+.toast { background: var(--paper); border: 2px solid var(--ink); border-radius: 8px; padding: 8px 12px; animation: genie-in .55s cubic-bezier(.22,.9,.3,1) both; will-change: transform; }
+.toast.leave { animation: genie-out .38s cubic-bezier(.6,0,.8,.4) both; pointer-events: none; }
 .toast.msg { cursor: pointer; background: #fff; }
 .title { font-weight: 700; font-size: 12px; color: var(--dim); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .body { font-size: 14px; white-space: pre-wrap; word-break: break-word; max-height: 130px; overflow: hidden; }
@@ -10,4 +11,17 @@ html, body { height: auto; overflow: hidden; }
 .actions button:hover { background: #fff; }
 .bar { height: 8px; background: #fff; border: 2px solid var(--ink); border-radius: 4px; margin-top: 8px; overflow: hidden; }
 .bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .1s linear; }
-@keyframes in { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
+/* macOS-style genie: the card is pulled out of (and sucked back into) the icon it hangs off */
+@keyframes genie-in {
+  0%   { transform: scale(.04, .02); opacity: 0; }
+  30%  { transform: scale(.18, .85) skewX(-7deg); opacity: 1; }
+  62%  { transform: scale(.85, 1.05) skewX(3deg); }
+  82%  { transform: scale(1.02, .98) skewX(-1deg); }
+  100% { transform: none; opacity: 1; }
+}
+@keyframes genie-out {
+  0%   { transform: none; opacity: 1; }
+  35%  { transform: scale(.85, 1.02) skewX(3deg); }
+  70%  { transform: scale(.18, .7) skewX(-7deg); opacity: 1; }
+  100% { transform: scale(.04, .02); opacity: 0; }
+}

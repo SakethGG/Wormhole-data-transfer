@@ -7,6 +7,21 @@ function setStatus(status) {
   for (const s of ['online', 'offline', 'connecting', 'unpaired']) hole.classList.toggle(s, s === status);
 }
 
+// little paper chips spiral into the hole when something is dropped
+function spawnChips() {
+  for (let i = 0; i < 7; i++) {
+    const c = document.createElement('i');
+    c.className = 'chip';
+    const ang = (i / 7) * Math.PI * 2 + Math.random() * 0.6;
+    c.style.setProperty('--sx', `${Math.round(Math.cos(ang) * 58)}px`);
+    c.style.setProperty('--sy', `${Math.round(Math.sin(ang) * 58)}px`);
+    c.style.setProperty('--rot', `${Math.round(200 + Math.random() * 300)}deg`);
+    c.style.animationDelay = `${i * 45}ms`;
+    hole.append(c);
+    setTimeout(() => c.remove(), 1000);
+  }
+}
+
 window.addEventListener('dragenter', () => { depth++; hole.classList.add('drag'); });
 window.addEventListener('dragleave', () => { if (--depth <= 0) { depth = 0; hole.classList.remove('drag'); } });
 window.addEventListener('drop', () => {
@@ -14,7 +29,8 @@ window.addEventListener('drop', () => {
   hole.classList.remove('drag', 'suck');
   void hole.offsetWidth;
   hole.classList.add('suck');
-  setTimeout(() => hole.classList.remove('suck'), 700);
+  spawnChips();
+  setTimeout(() => hole.classList.remove('suck'), 950);
 });
 
 // Drag the portal anywhere on screen; a press that barely moves still counts as a click.

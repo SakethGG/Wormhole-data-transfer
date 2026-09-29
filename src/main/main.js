@@ -186,7 +186,11 @@ function pushState() {
 }
 
 function showToast(item) {
-  if (toast && !toast.isDestroyed()) toast.webContents.send('toast:add', item);
+  if (!toast || toast.isDestroyed()) return;
+  // where the icon sits relative to the card, so the card can grow out of it and shrink back into it
+  const a = anchor();
+  const origin = `${a.right ? TOAST_W - WIDGET / 2 : WIDGET / 2}px ${a.bottom ? '100%' : '0%'}`;
+  toast.webContents.send('toast:add', { ...item, origin });
 }
 
 // ---------- autostart ----------
