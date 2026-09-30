@@ -48,7 +48,7 @@ Pairing pins each computer's certificate to the other, so no third device can jo
 
 | You want to | Do this |
 | --- | --- |
-| Send files or folders | Drop them onto the wormhole (or use **Files** / **Folder** in the panel) |
+| Send files or folders | Drop them onto the wormhole (or use **Files** / **Folder** in the panel). Works from Explorer/Finder and from the VS Code sidebar, which sends the real file rather than its path |
 | Send a short message | Click the wormhole, type, press Enter (Shift+Enter for a new line) |
 | Open a web page on the other computer | Drag the padlock icon in Chrome/Brave's address bar (or a link or bookmark) onto the wormhole. Dragging the tab itself does not work in browsers |
 | Send your clipboard | `Ctrl+Alt+V` (Windows) / `Cmd+Option+V` (Mac) |

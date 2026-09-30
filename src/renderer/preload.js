@@ -38,11 +38,27 @@ window.addEventListener('drop', (e) => {
   if (!dt) return;
   const paths = [...dt.files].map((f) => webUtils.getPathForFile(f)).filter(Boolean);
   if (paths.length) return ipcRenderer.invoke('files:send', paths);
-  // a browser tab/link dropped here arrives as a URL: send it so it opens on the other computer
-  const uri = (dt.getData('text/uri-list') || '').split(/\r?\n/).find((l) => l && !l.startsWith('#'));
-  const moz = (dt.getData('text/x-moz-url') || '').split(/\r?\n/)[0];
+  // Drag data is only readable during the event, so read everything now.
+  const lines = (raw) => String(raw || '').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
   const text = dt.getData('text/plain');
-  const url = [uri, moz, text && text.trim()].find((u) => u && /^https?:\/\/\S+$/i.test(u.trim()));
-  if (url) ipcRenderer.invoke('link:send', url.trim());
-  else if (text && text.trim()) ipcRenderer.invoke('msg:send', text);
+  const uris = lines(dt.getData('text/uri-list'));
+  const moz = lines(dt.getData('text/x-moz-url'))[0];
+
+  // a browser tab/link dropped here arrives as a URL: send it so it opens on the other computer
+  const url = [uris[0], moz, text && text.trim()].find((u) => u && /^https?:\/\/\S+$/i.test(u));
+  if (url) return ipcRenderer.invoke('link:send', url);
+
+  // Editors such as VS Code drag a file from their sidebar as *text* (a path or file:// address),
+  // not as a real file. Hand every candidate to the main process, which sends the file if it exists.
+  const cands = [];
+  for (const type of ['codefiles', 'resourceurls']) {
+    try {
+      const j = JSON.parse(dt.getData(type) || 'null');
+      if (Array.isArray(j)) cands.push(...j.filter((x) => typeof x === 'string'));
+    } catch { /* not JSON */ }
+  }
+  cands.push(...uris, ...lines(text));
+  const asText = () => { if (text && text.trim()) ipcRenderer.invoke('msg:send', text); };
+  if (!cands.length) return asText();
+  ipcRenderer.invoke('files:send-guess', cands.slice(0, 200)).then((sent) => { if (!sent) asText(); });
 });

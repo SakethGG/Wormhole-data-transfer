@@ -299,6 +299,26 @@ async function chooseDownloadDir() {
   if (!r.canceled && r.filePaths[0]) { store.set('downloadDir', r.filePaths[0]); pushState(); }
 }
 
+/**
+ * Turn something dragged out of an editor (a plain path, a file:// address, or a vscode-file:// address)
+ * into a real local path. Returns null unless that file or folder exists.
+ */
+function candidateToPath(raw) {
+  if (typeof raw !== 'string') return null;
+  let s = raw.trim().replace(/^"(.*)"$/, '$1');
+  if (!s || s.length > 4096) return null;
+  if (/^[a-z][a-z0-9+.-]+:\/\//i.test(s)) {
+    let u;
+    try { u = new URL(s); } catch { return null; }
+    if (u.protocol !== 'file:' && u.protocol !== 'vscode-file:') return null;
+    s = decodeURIComponent(u.pathname);
+    if (/^\/[a-zA-Z]:/.test(s)) s = s.slice(1); // /c:/Users/... -> c:/Users/...
+  }
+  if (!path.isAbsolute(s)) return null;
+  s = path.normalize(s);
+  try { fs.statSync(s); return s; } catch { return null; }
+}
+
 /** Only plain http(s) links are ever opened automatically. */
 function isWebUrl(u) {
   try { const p = new URL(String(u)); return p.protocol === 'http:' || p.protocol === 'https:'; } catch { return false; }
@@ -340,6 +360,17 @@ function registerIpc() {
   ipcMain.handle('files:send', (_e, paths) => {
     if (!Array.isArray(paths) || !paths.length) return false;
     return peer.sendPaths(paths.filter((p) => typeof p === 'string'));
+  });
+  ipcMain.handle('files:send-guess', (_e, cands) => {
+    if (!Array.isArray(cands)) return false;
+    const found = [];
+    for (const c of cands) {
+      const p = candidateToPath(c);
+      if (p && !found.includes(p)) found.push(p);
+    }
+    if (!found.length) return false;
+    peer.sendPaths(found);
+    return true;
   });
   ipcMain.handle('files:pick', async (_e, kind) => {
     suppressBlur = true;

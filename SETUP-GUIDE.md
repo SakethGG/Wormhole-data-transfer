@@ -103,7 +103,7 @@ You never need to pair again. Whenever both are running, they reconnect on their
 
 | You want to | Do this |
 | --- | --- |
-| Send files or folders | Drag them onto the wormhole. It pulls them in |
+| Send files or folders | Drag them onto the wormhole. It pulls them in. Files dragged from the VS Code sidebar are sent as real files too |
 | Send a short message | Click the wormhole, type, press **Enter** (**Shift+Enter** for a new line) |
 | Open a web page on the other computer | Drag the padlock icon in Chrome/Brave's address bar (or a link or bookmark) onto the wormhole. Dragging the tab itself does not work, because browsers do not share a tab's address |
 | Send your clipboard | `Ctrl+Alt+V` on Windows, `Cmd+Option+V` on Mac |
