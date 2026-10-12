@@ -15,7 +15,7 @@ const PRELOAD = path.join(RENDERER, 'preload.js');
 const IS_MAC = process.platform === 'darwin';
 const IS_WIN = process.platform === 'win32';
 
-const WIDGET = 80;
+const WIDGET = 64;
 const WIDGET_DESIGN = 110; // the widget artwork is laid out at this size and scaled down with zoom
 const MARGIN = 12;
 const GAP = 8;
